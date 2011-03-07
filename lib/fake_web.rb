@@ -94,19 +94,19 @@ module FakeWeb
   #   to a valid filesystem path, the contents of that file will be read and used
   #   as the body of the response instead. (This used to be two options,
   #   <tt>:string</tt> and <tt>:file</tt>, respectively. These are now deprecated.)
-  # <tt>:response</tt>:: 
+  # <tt>:response</tt>::
   #   Either a <tt>Net::HTTPResponse</tt>, an +IO+, or a +String+ which is used
   #   as the full response for the request.
-  # 
+  #
   #   The easier way by far is to pass the <tt>:response</tt> option to
   #   +register_uri+ as a +String+ or an (open for reads) +IO+ object which
   #   will be used as the complete HTTP response, including headers and body.
   #   If the string points to a readable file, this file will be used as the
   #   content for the request.
-  # 
+  #
   #   To obtain a complete response document, you can use the +curl+ command,
   #   like so:
-  #   
+  #
   #     curl -i http://example.com > response_from_example.com
   #
   #   which can then be used in your test environment like so:
@@ -116,7 +116,7 @@ module FakeWeb
   #   See the <tt>Net::HTTPResponse</tt>
   #   documentation[http://ruby-doc.org/stdlib/libdoc/net/http/rdoc/classes/Net/HTTPResponse.html]
   #   for more information on creating custom response objects.
-  # 
+  #
   # +options+ may also be an +Array+ containing a list of the above-described
   # +Hash+. In this case, FakeWeb will rotate through each response. You can
   # optionally repeat a response more than once before rotating:
@@ -192,13 +192,19 @@ module FakeWeb
     end
   end
 
-  # Returns the request object from the last request made via Net::HTTP.
-  def self.last_request
-    @last_request
+  # Resets the list of recent request objects.
+  def self.clear_recent_requests
+    self.recent_requests.clear
   end
 
-  def self.last_request=(request) #:nodoc:
-    @last_request = request
+  # Returns an array of recent request objects, from oldest to newest.
+  def self.recent_requests
+    @recent_requests ||= []
+  end
+
+  # Returns the request object from the last request made via Net::HTTP.
+  def self.last_request
+    self.recent_requests.last
   end
 
   private
